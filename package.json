@@ -1,0 +1,90 @@
+{
+  "name": "@pleasure-js/showcase",
+  "version": "1.0.0",
+  "description": "Loads content of found javascript and json files in given directory into a single structured object",
+  "author": "Martin Rafael Gonzalez <tin@devtin.io>",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --ext .js,.vue --ignore-path .gitignore lib/ index.js",
+    "test": "ava --serial --verbose",
+    "release": "standard-version -a"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pleasure-js/showcase.git"
+  },
+  "keywords": [],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pleasure-js/showcase/issues"
+  },
+  "homepage": "https://github.com/pleasure-js/showcase#readme",
+  "devDependencies": {
+    "@ava/babel": "^1.0.1",
+    "ava": "^3.9.0",
+    "eslint": "^7.2.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "esm": "^3.2.25",
+    "standard-version": "^8.0.0"
+  },
+  "ava": {
+    "files": [
+      "test/**/*.test.js",
+      "lib/**/*.unit.js"
+    ],
+    "require": [
+      "esm"
+    ],
+    "babel": true,
+    "snapshotDir": "test/snapshots"
+  },
+  "eslintConfig": {
+    "extends": [
+      "standard",
+      "plugin:vue/recommended"
+    ],
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "globals": {
+      "BigInt": true
+    },
+    "parserOptions": {
+      "parser": "babel-eslint",
+      "ecmaVersion": 2018,
+      "sourceType": "module"
+    },
+    "rules": {
+      "vue/no-unused-components": 1,
+      "vue/script-indent": [
+        "error",
+        2,
+        {
+          "baseIndent": 0,
+          "switchCase": 0,
+          "ignores": []
+        }
+      ]
+    }
+  },
+  "standard-version": {
+    "scripts": {
+      "prerelease": "npm run lint && npm run build",
+      "precommit": "npm run --silent build > /dev/null 2>&1 && git add dist/ -f"
+    }
+  },
+  "dependencies": {
+    "@devtin/schema-validator": "^2.9.0",
+    "deep-list-dir": "^1.2.0",
+    "element-ui": "^2.13.2",
+    "lodash": "^4.17.15",
+    "pkg-up": "^3.1.0",
+    "tmp": "^0.2.1",
+    "vue-prism-component": "^1.2.0"
+  }
+}

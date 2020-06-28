@@ -1,0 +1,79 @@
+:root {
+    --example-color: var(--showcase-example-color, var(--secondary-color, #fff));
+    --component-link-background: var(--showcase-component-link-background, transparent);
+    --component-link-color: var(--showcase-component-link-color, var(--primary-color, #000));
+    --component-link-bar-color: var(--showcase-component-link-bar-color, var(--primary-color, #000));
+    --head-color: var(--showcase-head-color, var(--secondary-color));
+    --head-background: var(--showcase-head-background, var(--primary-color, #000));
+    --sep-border-color: var(--showcase-sep-border-color, #d7d7d7);
+    --components-width: 280px;
+    --docs-width: 400px;
+    --break-menu: 1024px;
+    --menu-box: 30px;
+}
+
+html, body {
+    padding: 0;
+    margin: 0;
+    background: transparent;
+}
+
+html.safari {
+    /* mobile viewport bug fix */
+    min-height: -webkit-fill-available;
+}
+
+body {
+    min-height: 100vh;
+    /* mobile viewport bug fix */
+
+    html.safari & {
+        /* mobile viewport bug fix */
+        min-height: -webkit-fill-available;
+    }
+}
+
+#main-showcase {
+    min-height: 100vh;
+    html.safari & {
+        /* mobile viewport bug fix */
+        min-height: -webkit-fill-available;
+    }
+
+    code[class*="language-"], pre[class*="language-"] {
+        text-shadow: none;
+    }
+}
+
+.showcase-head {
+    background: var(--head-background);
+    position: fixed;
+    top:0;
+    width: inherit;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    box-sizing: border-box;
+    padding: 0 15px;
+    text-transform: uppercase;
+    z-index: 1000;
+    color: var(--head-color);
+
+    &.project-head {
+        justify-content: center;
+
+        img.logo {
+            display: block;
+            max-height: 40px;
+        }
+    }
+
+    h2 {
+        color: var(--secondary-color);
+    }
+
+    @media screen and (max-width: 1024px) {
+        justify-content: center;
+        width: 100%;
+    }
+}
