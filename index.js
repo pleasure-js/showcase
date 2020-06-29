@@ -8,6 +8,7 @@ import get from 'lodash/get'
 import pkgUp from 'pkg-up'
 import { Schema } from '@devtin/schema-validator'
 import tmp from 'tmp'
+import chokidar from 'chokidar'
 
 const Config = new Schema({
   name: {
@@ -115,62 +116,20 @@ function composeImportComponents (componentsPlugin) {
   return `${imports.join('\n')}\n\n${componentRegistration.join('\n')}`
 }
 
-/**
- * @typedef {Object} VueComponentExample
- * @property {String} name - Example name
- * @property {String} vueCode - template part of the component
- * @property {String} [scriptCode] - script part of the component
- * @property {String} [styleCode] - style part of the component
- */
-
-/**
- * @typedef {Object} VueComponent
- *
- * @property {String} name - Name of the component
- * @property {String} tagName - Tag name of the component
- * @property {String} jsdocMd - Markdown version of the component jsdoc
- * @property {VueComponentExample[]} examples
- */
-
-/**
- * @param {Object} [moduleOptions]
- * @return {Promise<void>}
- */
-export default async function (moduleOptions = {}) {
-  const config = Config.parse(moduleOptions)
-
-  if (config.withElementUi) {
-    this.options.css.push('element-ui/lib/theme-chalk/reset.css')
-    this.options.css.push(path.join(__dirname, 'lib/element-ui.scss'))
-  }
-
-  this.extendRoutes((routes, resolve) => {
-    console.log(resolve(__dirname, 'lib/showcase.vue'))
-    routes.push({
-      name: 'showcase',
-      path: config.url,
-      component: resolve(__dirname, 'lib/showcase.vue')
-    })
-    routes.push({
-      name: 'showcase',
-      path: `${config.previewUrl}/:component`,
-      component: resolve(__dirname, 'lib/showcase-iframe.vue')
-    })
-  })
-
-  const componentsDir = path.resolve(this.options.srcDir, config.componentsPath)
-  const componentsExampleDir = path.join(this.options.srcDir, config.componentsExamplePath)
-
-  // todo: change for a tmp file
-  // const pluginDst = `${this.options.srcDir}/plugins/components.js`
-  const pluginDst = tmp.tmpNameSync() // `${this.options.srcDir}/plugins/components.js`
-  console.log({ pluginDst })
-
+async function createShowcasePlugin ({
+  componentsDir,
+  componentsExampleDir,
+  componentsFindPattern,
+  componentsExampleFindPattern,
+  withElementUi,
+  pluginFile,
+  config
+}) {
   // load vue components file list
-  const createdComponents = await deepListDir(componentsDir, { pattern: config.componentsFindPattern })
+  const createdComponents = await deepListDir(componentsDir, { pattern: componentsFindPattern })
   // load example vue components file list
   // load example vue components file list
-  const createdComponentsExamples = await deepListDir(componentsExampleDir, { pattern: config.componentsExampleFindPattern })
+  const createdComponentsExamples = await deepListDir(componentsExampleDir, { pattern: componentsExampleFindPattern })
 
   const importComponents = createdComponents.map(file => {
     const tagName = kebabCase(path.basename(file, '.vue'))
@@ -221,7 +180,7 @@ export default async function (moduleOptions = {}) {
   const { modules: elementUiModules, setup: elementUiSetup } = setupElementUi()
   const componentsPlugin = ['import Vue from \'vue\'', 'import Vuex from \'vuex\'']
 
-  if (config.withElementUi) {
+  if (withElementUi) {
     componentsPlugin.push(...elementUiModules)
   }
 
@@ -232,12 +191,97 @@ export default async function (moduleOptions = {}) {
     })
   ]
 
-  if (config.withElementUi) {
+  if (withElementUi) {
     functionExportPayload.push(...elementUiSetup)
   }
 
   componentsPlugin.push(composeImportComponents(importComponents), functionExport(functionExportPayload))
 
-  fs.writeFileSync(pluginDst, componentsPlugin.join('\n'))
-  this.addPlugin(pluginDst)
+  fs.writeFileSync(pluginFile, componentsPlugin.join('\n'))
+}
+
+/**
+ * @typedef {Object} VueComponentExample
+ * @property {String} name - Example name
+ * @property {String} vueCode - template part of the component
+ * @property {String} [scriptCode] - script part of the component
+ * @property {String} [styleCode] - style part of the component
+ */
+
+/**
+ * @typedef {Object} VueComponent
+ *
+ * @property {String} name - Name of the component
+ * @property {String} tagName - Tag name of the component
+ * @property {String} jsdocMd - Markdown version of the component jsdoc
+ * @property {VueComponentExample[]} examples
+ */
+
+/**
+ * @param {Object} [moduleOptions]
+ * @return {Promise<void>}
+ */
+export default async function (moduleOptions = {}) {
+  const config = Config.parse(moduleOptions)
+
+  if (config.withElementUi) {
+    this.options.css.push('element-ui/lib/theme-chalk/reset.css')
+    this.options.css.push(path.join(__dirname, 'lib/element-ui.scss'))
+  }
+
+  this.extendRoutes((routes, resolve) => {
+    console.log(resolve(__dirname, 'lib/showcase.vue'))
+    routes.push({
+      name: 'showcase',
+      path: config.url,
+      component: resolve(__dirname, 'lib/showcase.vue')
+    })
+    routes.push({
+      name: 'showcase',
+      path: `${config.previewUrl}/:component`,
+      component: resolve(__dirname, 'lib/showcase-iframe.vue')
+    })
+  })
+
+  const { withElementUi } = config
+  // const componentsDir = path.resolve(this.options.srcDir, config.componentsPath)
+  // const componentsExampleDir = path.join(this.options.srcDir, config.componentsExamplePath)
+  // const componentsFindPattern = config.componentsFindPattern
+  // const componentsExampleFindPattern = config.componentsExampleFindPattern
+
+  // todo: change for a tmp file
+  // const pluginDst = `${this.options.srcDir}/plugins/components.js`
+  const pluginFile = tmp.tmpNameSync() // `${this.options.srcDir}/plugins/components.js`
+  const componentsDir = path.resolve(this.options.srcDir, config.componentsPath)
+  const componentsExampleDir = path.join(this.options.srcDir, config.componentsExamplePath)
+  const componentsFindPattern = config.componentsFindPattern
+  const componentsExampleFindPattern = config.componentsExampleFindPattern
+
+  await createShowcasePlugin({
+    componentsDir,
+    componentsExampleDir,
+    componentsFindPattern,
+    componentsExampleFindPattern,
+    config,
+    withElementUi,
+    pluginFile
+  })
+
+  const watcher = chokidar.watch([componentsDir, componentsExampleDir])
+
+  watcher.on('all', () => {
+    createShowcasePlugin({
+      componentsDir,
+      componentsExampleDir,
+      componentsFindPattern,
+      componentsExampleFindPattern,
+      config,
+      withElementUi,
+      pluginFile
+    }).catch(err => {
+      console.log('error generating showcase', err)
+    })
+  })
+
+  this.addPlugin(pluginFile)
 }

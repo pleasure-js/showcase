@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "@devtin/schema-validator": "^2.9.0",
+    "chokidar": "^3.4.0",
     "deep-list-dir": "^1.2.0",
     "element-ui": "^2.13.2",
     "lodash": "^4.17.15",
