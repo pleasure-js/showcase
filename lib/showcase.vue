@@ -97,6 +97,11 @@ export default {
     }
   },
   watch: {
+    selectedComponent (v) {
+      if (!isNaN(v) && v >= 0) {
+        this.$router.push(`./${this.components[v].tag}`)
+      }
+    },
     docsOpened (v) {
       if (v) {
         this.$refs['showcase-component'].toggle(false)
