@@ -115,6 +115,13 @@ export default {
     if (isSafari) {
       document.querySelector('html').classList.add('safari')
     }
+
+    if (this.$route.params.component) {
+      const component = this.components.map(({ tag }) => tag).indexOf(this.$route.params.component)
+      if (component >= 0) {
+        this.selectedComponent = component
+      }
+    }
   },
   methods: {
     select ({ component, example }) {
