@@ -230,7 +230,6 @@ export default async function (moduleOptions = {}) {
   }
 
   this.extendRoutes((routes, resolve) => {
-    console.log(resolve(__dirname, 'lib/showcase.vue'))
     routes.push({
       name: 'showcase',
       path: config.url,
