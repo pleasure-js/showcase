@@ -269,7 +269,7 @@ export default async function (moduleOptions = {}) {
 
   const watcher = chokidar.watch([componentsDir, componentsExampleDir])
 
-  watcher.on('all', () => {
+  watcher.on('change', (payload) => {
     createShowcasePlugin({
       componentsDir,
       componentsExampleDir,
@@ -278,9 +278,13 @@ export default async function (moduleOptions = {}) {
       config,
       withElementUi,
       pluginFile
-    }).catch(err => {
-      console.log('error generating showcase', err)
     })
+      .then(() => {
+        console.log('showcase created')
+      })
+      .catch(err => {
+        console.log('error generating showcase', err)
+      })
   })
 
   this.addPlugin(pluginFile)
