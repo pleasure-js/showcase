@@ -236,7 +236,7 @@ export default async function (moduleOptions = {}) {
       component: resolve(__dirname, 'lib/showcase.vue')
     })
     routes.push({
-      name: 'showcase',
+      name: 'showcase-iframe',
       path: `${config.previewUrl}/:component`,
       component: resolve(__dirname, 'lib/showcase-iframe.vue')
     })
