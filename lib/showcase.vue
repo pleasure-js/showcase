@@ -99,7 +99,7 @@ export default {
   watch: {
     selectedComponent (v) {
       if (!isNaN(v) && v >= 0) {
-        this.$router.push(`./${this.components[v].tag}`)
+        this.$router.push(`${this.config.url}/${this.components[v].tag}`)
       }
     },
     docsOpened (v) {
