@@ -275,11 +275,6 @@ export default {
       pointer-events: none;
       opacity: 0;
       transition: opacity .15s ease-in;
-      display: none;
-
-      @media screen and (max-width: 1024px) {
-        display: block;
-      }
 
       &.on {
         pointer-events: all;
