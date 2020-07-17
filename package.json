@@ -1,6 +1,6 @@
 {
   "name": "@pleasure-js/showcase",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "description": "Loads content of found javascript and json files in given directory into a single structured object",
   "author": "Martin Rafael Gonzalez <tin@devtin.io>",
   "main": "index.js",
