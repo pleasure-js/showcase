@@ -1,6 +1,6 @@
 {
   "name": "@pleasure-js/showcase",
-  "version": "1.0.0-beta",
+  "version": "1.0.1-beta",
   "description": "Loads content of found javascript and json files in given directory into a single structured object",
   "author": "Martin Rafael Gonzalez <tin@devtin.io>",
   "main": "index.js",
@@ -80,6 +80,7 @@
   },
   "dependencies": {
     "@devtin/schema-validator": "^2.9.0",
+    "@pleasure-js/docs": "^1.2.2-beta",
     "chokidar": "^3.4.0",
     "deep-list-dir": "^1.2.0",
     "dmd-clean": "^0.1.1",
