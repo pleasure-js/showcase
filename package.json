@@ -31,7 +31,19 @@
     "eslint-plugin-standard": "^4.0.1",
     "eslint-plugin-vue": "^6.2.2",
     "esm": "^3.2.25",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
     "standard-version": "^8.0.2"
+  },
+  "lint-staged": {
+    "src/**/*.{js,vue}": [
+      "npm lint ."
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "ava": {
     "files": [
